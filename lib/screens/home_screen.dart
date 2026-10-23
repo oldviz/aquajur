@@ -74,12 +74,11 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             }
 
-            // Оригинальная сетка плиток
             return GridView.builder(
               padding: const EdgeInsets.all(12),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                childAspectRatio: 0.85, // Чуть выше, чем квадрат, для размещения данных
+                childAspectRatio: 0.95,
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
               ),
@@ -113,69 +112,98 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Верхняя часть: Иконка/Аватар и Название
+                          // Название аквариума
+                          Text(
+                            aquarium.name,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                            ),
+                          ),
+
+                          const SizedBox(height: 4),
+
+                          // Литраж крупно и бирюзовым
+                          Text(
+                            '${aquarium.volume} л',
+                            style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              color: colorScheme.primary,
+                              height: 1.0,
+                            ),
+                          ),
+
+                          const SizedBox(height: 2),
+
+                          // Размеры мелко
+                          Text(
+                            '${_fmtNum(aquarium.lengthCm)}×'
+                            '${_fmtNum(aquarium.widthCm)}×'
+                            '${_fmtNum(aquarium.heightCm)} см',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+
+                          const Spacer(),
+
+                          // Дата запуска
                           Row(
                             children: [
-                              CircleAvatar(
-                                radius: 20,
-                                backgroundColor: colorScheme.primaryContainer,
-                                foregroundColor: colorScheme.onPrimaryContainer,
-                                child: Text(
-                                  '${aquarium.volume}',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                  ),
-                                ),
+                              Icon(
+                                Icons.play_circle_outline,
+                                size: 12,
+                                color: colorScheme.onSurfaceVariant,
                               ),
-                              const SizedBox(width: 8),
+                              const SizedBox(width: 4),
                               Expanded(
                                 child: Text(
-                                  aquarium.name,
-                                  maxLines: 2,
+                                  aquarium.launchDate != null
+                                      ? 'Запуск: ${_formatShortDate(aquarium.launchDate!)}'
+                                      : 'Запуск: не указан',
+                                  maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 15,
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: colorScheme.onSurfaceVariant,
                                   ),
                                 ),
                               ),
                             ],
                           ),
 
-                          const Spacer(),
+                          const SizedBox(height: 2),
 
-                          // Нижняя часть: Дата запуска или активность
-                          if (tile.lastActivity != null)
-                            Text(
-                              'Актив.: ${_formatShortDate(tile.lastActivity!)}',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 11,
+                          // Последняя активность
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.history,
+                                size: 12,
                                 color: colorScheme.onSurfaceVariant,
                               ),
-                            )
-                          else if (aquarium.launchDate != null)
-                            Text(
-                              'Запущен: ${_formatShortDate(aquarium.launchDate!)}',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: colorScheme.onSurfaceVariant,
+                              const SizedBox(width: 4),
+                              Expanded(
+                                child: Text(
+                                  tile.lastActivity != null
+                                      ? 'Актив.: ${_formatShortDate(tile.lastActivity!)}'
+                                      : 'Нет активности',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
                               ),
-                            )
-                          else
-                            Text(
-                              'Нет данных',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: colorScheme.onSurfaceVariant,
-                              ),
-                            ),
+                            ],
+                          ),
                         ],
                       ),
                     ),
@@ -187,6 +215,14 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       },
     );
+  }
+
+  String _fmtNum(double value) {
+    if (value == value.roundToDouble()) {
+      return value.toInt().toString();
+    }
+
+    return value.toStringAsFixed(1);
   }
 
   String _formatShortDate(DateTime date) {
