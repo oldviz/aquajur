@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 432 432" width="432" height="432">
+  <defs>
+    <clipPath id="tankClip">
+      <rect x="124" y="258" width="264" height="164" rx="26" />
+    </clipPath>
+
+    <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#22D3EE" />
+      <stop offset="1" stop-color="#0891B2" />
+    </linearGradient>
+  </defs>
+
+  <g transform="translate(216 216) scale(0.68) translate(-254 -241.5)">
+    <!-- Белый котик -->
+    <path fill="#FFFFFF" d="M143 132 L116 49 L214 98 Z" />
+    <path fill="#FFFFFF" d="M369 132 L396 49 L298 98 Z" />
+
+    <ellipse cx="256" cy="214" rx="134" ry="118" fill="#FFFFFF" />
+
+    <!-- Розовые внутренности ушек -->
+    <path fill="#FFC7D5" d="M154 126 L136 76 L194 104 Z" />
+    <path fill="#FFC7D5" d="M358 126 L376 76 L318 104 Z" />
+
+    <!-- Глаза -->
+    <ellipse cx="209" cy="190" rx="15" ry="19" fill="#0F172A" />
+    <ellipse cx="303" cy="190" rx="15" ry="19" fill="#0F172A" />
+
+    <circle cx="214" cy="184" r="5" fill="#FFFFFF" opacity="0.9" />
+    <circle cx="308" cy="184" r="5" fill="#FFFFFF" opacity="0.9" />
+
+    <!-- Нос / рот -->
+    <path
+      d="M246 222 Q256 232 266 222"
+      stroke="#0F172A"
+      stroke-width="7"
+      fill="none"
+      stroke-linecap="round"
+    />
+    <path
+      d="M256 210 L256 222"
+      stroke="#0F172A"
+      stroke-width="6"
+      stroke-linecap="round"
+    />
+
+    <!-- Аквариум -->
+    <rect
+      x="112"
+      y="246"
+      width="288"
+      height="188"
+      rx="34"
+      fill="#082F49"
+      opacity="0.96"
+      stroke="#67E8F9"
+      stroke-width="10"
+    />
+
+    <g clip-path="url(#tankClip)">
+      <!-- Вода -->
+      <rect x="124" y="292" width="264" height="130" fill="url(#water)" />
+
+      <!-- Волна -->
+      <path
+        d="M124 292
+           C160 272 196 312 232 292
+           C268 272 304 312 340 292
+           C356 284 372 288 388 296
+           L388 422
+           L124 422 Z"
+        fill="#06B6D4"
+        opacity="0.55"
+      />
+
+      <!-- Грунт -->
+      <ellipse cx="256" cy="414" rx="145" ry="28" fill="#FDE68A" />
+
+      <!-- Растения -->
+      <path
+        d="M170 405
+           C175 360 155 340 178 310
+           C186 335 196 345 192 372
+           C205 350 220 352 214 382
+           C225 365 238 370 230 405 Z"
+        fill="#22C55E"
+      />
+
+      <path
+        d="M330 405
+           C325 365 345 345 322 315
+           C314 340 304 350 308 377
+           C295 355 280 357 286 387
+           C275 370 262 375 270 405 Z"
+        fill="#16A34A"
+      />
+
+      <!-- Рыбка -->
+      <g transform="translate(232 330)">
+        <ellipse cx="0" cy="0" rx="42" ry="27" fill="#FB923C" />
+        <path d="M32 0 L70 -24 L62 0 L70 24 Z" fill="#F97316" />
+        <path
+          d="M-8 -22 Q4 -42 22 -28 Q8 -20 -8 -22 Z"
+          fill="#FDBA74"
+        />
+        <circle cx="-18" cy="-5" r="5" fill="#0F172A" />
+      </g>
+
+      <!-- Пузыри -->
+      <circle cx="292" cy="318" r="7" fill="#E0F2FE" opacity="0.85" />
+      <circle cx="308" cy="298" r="5" fill="#E0F2FE" opacity="0.75" />
+      <circle cx="318" cy="280" r="3.5" fill="#E0F2FE" opacity="0.65" />
+    </g>
+
+    <!-- Блики на стекле аквариума -->
+    <path
+      d="M142 276 L188 276"
+      stroke="#FFFFFF"
+      stroke-width="10"
+      stroke-linecap="round"
+      opacity="0.28"
+    />
+    <path
+      d="M142 300 L166 300"
+      stroke="#FFFFFF"
+      stroke-width="8"
+      stroke-linecap="round"
+      opacity="0.18"
+    />
+  </g>
+</svg>

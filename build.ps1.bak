@@ -1,0 +1,99 @@
+﻿# ============================================================
+# Скрипт автоматической сборки Aquarium Journal
+# По умолчанию собирает Android APK, если не выбрано иное
+# ============================================================
+
+# Получаем текущую дату и время
+$buildDate = Get-Date -Format "dd.MM.yyyy HH:mm"
+
+Write-Host ""
+Write-Host "=========================================" -ForegroundColor Cyan
+Write-Host "  Aquarium Journal - Сборка приложения" -ForegroundColor Cyan
+Write-Host "=========================================" -ForegroundColor Cyan
+Write-Host "Дата сборки: $buildDate" -ForegroundColor Yellow
+Write-Host ""
+
+# Определяем версию из pubspec.yaml
+$pubspec = Get-Content "pubspec.yaml" -Raw
+$version = "unknown"
+if ($pubspec -match "version:\s*([^\s]+)") {
+    $version = $Matches[1] -replace '\+', '-'
+}
+Write-Host "Версия:    $version" -ForegroundColor Yellow
+Write-Host ""
+
+Write-Host "Выберите тип сборки:" -ForegroundColor Green
+Write-Host "  1 - Android APK (release) [ПО УМОЛЧАНИЮ]" -ForegroundColor White
+Write-Host "  2 - Web (release)" -ForegroundColor White
+Write-Host "  3 - Оба варианта" -ForegroundColor White
+$choice = Read-Host "Введите номер (1/2/3) или просто нажмите Enter для Android"
+
+# Если пользователь ничего не ввел, по умолчанию выбираем 1 (Android)
+if ([string]::IsNullOrWhiteSpace($choice)) {
+    $choice = "1"
+    Write-Host "Выбрано по умолчанию: Android APK" -ForegroundColor Yellow
+}
+
+Write-Host ""
+Write-Host "Очистка проекта и получение зависимостей..." -ForegroundColor Cyan
+flutter clean | Out-Null
+flutter pub get | Out-Null
+
+function Build-Apk {
+    Write-Host ""
+    Write-Host "Сборка Android APK..." -ForegroundColor Cyan
+    flutter build apk --release --dart-define=BUILD_DATE="$buildDate"
+    
+    if ($LASTEXITCODE -eq 0) {
+        $sourceApk = "build\app\outputs\flutter-apk\app-release.apk"
+        $targetApk = "build\app\outputs\flutter-apk\aquarium_journal_$version.apk"
+        if (Test-Path $sourceApk) {
+            Copy-Item $sourceApk -Destination $targetApk -Force
+            Write-Host "✅ APK успешно собран!" -ForegroundColor Green
+            Write-Host "Путь: $((Resolve-Path $targetApk).Path)" -ForegroundColor Yellow
+        }
+    } else {
+        Write-Host "❌ Ошибка при сборке APK" -ForegroundColor Red
+    }
+}
+
+function Build-Web {
+    Write-Host ""
+    Write-Host "Сборка Web..." -ForegroundColor Cyan
+    flutter build web --release --dart-define=BUILD_DATE="$buildDate"
+    
+    if ($LASTEXITCODE -eq 0) {
+        if (Test-Path "web\sqlite3.wasm") {
+            Copy-Item "web\sqlite3.wasm" -Destination "build\web\" -Force
+        }
+        if (Test-Path "web\drift_worker.js") {
+            Copy-Item "web\drift_worker.js" -Destination "build\web\" -Force
+        }
+        
+        $zipTarget = "build\aquarium_journal_web_$version.zip"
+        if (Test-Path $zipTarget) { Remove-Item $zipTarget -Force }
+        Compress-Archive -Path "build\web\*" -DestinationPath $zipTarget -Force
+        
+        Write-Host "✅ Web-версия успешно собрана!" -ForegroundColor Green
+        Write-Host "Папка: $((Resolve-Path 'build\web').Path)" -ForegroundColor Yellow
+        Write-Host "Архив: $((Resolve-Path $zipTarget).Path)" -ForegroundColor Yellow
+    } else {
+        Write-Host "❌ Ошибка при сборке Web" -ForegroundColor Red
+    }
+}
+
+switch ($choice) {
+    "1" { Build-Apk }
+    "2" { Build-Web }
+    "3" { Build-Apk; Build-Web }
+    default { 
+        Write-Host ""
+        Write-Host "❌ Неверный выбор. Сборка прервана." -ForegroundColor Red 
+    }
+}
+
+Write-Host ""
+Write-Host "=========================================" -ForegroundColor Cyan
+Write-Host "  Сборка завершена" -ForegroundColor Cyan
+Write-Host "=========================================" -ForegroundColor Cyan
+Write-Host ""
